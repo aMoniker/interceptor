@@ -1,0 +1,34 @@
+{
+  "name": "interceptor",
+  "version": "0.0.1",
+  "description": "Provides a simple Intercepting Filter mechanism",
+  "main": "dist/interceptor.min.js",
+  "scripts": {
+    "test": "runtests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aMoniker/interceptor"
+  },
+  "keywords": [
+    "interceptor",
+    "filter",
+    "jquery"
+  ],
+  "author": "Jim Greenleaf",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aMoniker/interceptor/issues"
+  },
+  "homepage": "https://github.com/aMoniker/interceptor",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-notify": "^0.3.0",
+    "jasmine-core": "^2.0.1",
+    "karma": "^0.12.19",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "^0.1.5"
+  }
+}
