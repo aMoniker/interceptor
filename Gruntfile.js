@@ -11,7 +11,13 @@ module.exports = function(grunt) {
             js: {
                 options: {
                     title: '[Interceptor] JS',
-                    message: 'javascript compiled'
+                    message: 'javascript compiled',
+                }
+            },
+            karma: {
+                options: {
+                    title: '[Interceptor] Tests',
+                    message: 'karma tests successful',
                 }
             }
         },
@@ -31,6 +37,13 @@ module.exports = function(grunt) {
                 }
             },
         },
+        karma: {
+            tests: {
+                configFile: 'karma.conf.js',
+                singleRun: true,
+                browsers: ['PhantomJS'],
+            }
+        },
         watch: {
             scripts: {
                 files: [
@@ -46,8 +59,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-notify');
+    grunt.loadNpmTasks('grunt-karma');
     
     grunt.task.run('notify_hooks');
-    grunt.registerTask('compile-js', ['uglify', 'notify:js']);
+    grunt.registerTask('compile-js', ['uglify', 'notify:js', 'karma-tests']);
+    grunt.registerTask('karma-tests', ['karma:continuous', 'notify:karma']);
     grunt.registerTask('default', ['watch']);
 };
