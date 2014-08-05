@@ -22,8 +22,32 @@ Interceptor.prototype.init = init = function(force) {
     return true;
 }
 
-Interceptor.prototype.addFilter = function() {
+Interceptor.prototype.filters = {};
+Interceptor.prototype.filtersIndex = {};
 
+Interceptor.prototype.addFilter = function(name, callback, order) {
+    order = order || 10;
+
+    if (!name || typeof name !== 'string') {
+        throw new TypeError('name argument must be a valid string');
+    }
+
+    if (!callback || typeof callback !== 'function') {
+        throw new TypeError('callback argument must be a valid function');
+    }
+
+    if (typeof order !== 'number') {
+        throw new TypeError('order argument must be a number');
+    }
+
+    if (!this.filters[name])        { this.filters[name]        = {}; }
+    if (!this.filters[name][order]) { this.filters[name][order] = []; }
+    if (!this.filtersIndex[name])   { this.filtersIndex[name]   = []; }
+
+    this.filtersIndex[name][order] = order;
+    this.filters[name][order] = this.filters[name][order].concat([callback]);
+
+    return true;
 };
 
 Interceptor.prototype.applyFilter = function() {
@@ -36,7 +60,6 @@ Interceptor.prototype.removeFilter = function() {
 
 Interceptor.prototype.noConflict = function(global_name) {
     global_name = global_name || 'InterceptorJS';
-    console.log('using global name', global_name);
     (window || global).Interceptor = undefined;
     (window || global)[global_name] = new Interceptor;
 };

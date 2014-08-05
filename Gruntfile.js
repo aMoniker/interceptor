@@ -17,7 +17,7 @@ module.exports = function(grunt) {
             karma: {
                 options: {
                     title: '[Interceptor] Tests',
-                    message: 'karma tests successful',
+                    message: 'karma:tests successful',
                 }
             }
         },
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
                 files: [
                     'test/**/*.js',
                 ],
-                tasks: ['karma:tests'],
+                tasks: ['karma-tests'],
             }
         }
     });
