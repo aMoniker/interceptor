@@ -5,6 +5,12 @@ Interceptor
 
 An implementation of the [Intercepting Filter](http://www.corej2eepatterns.com/InterceptingFilter.htm) pattern for javascript.
 
+Installation
+---
+Run `bower install -S interceptor`
+
+Or just download this repo and include `dist/interceptor.min.js` in your project.
+
 API
 ---
 #### addFilter(name, callback, order)
@@ -44,3 +50,9 @@ Completely removes all filters.
 There's also a noConflict mode in case you're already using the name `Interceptor` as a global.
 
 Just after you load `interceptor.min.js`, call `Interceptor.noConflict('SomeOtherName')` and the `Interceptor` global will be cleared and `SomeOtherName` will contain a reference to the library instead. If you don't give it a name, the default will be `InterceptorJS`.
+
+Tests
+---
+Tests are run through [Karma](http://karma-runner.github.io/0.12/index.html) using [Jasmine](http://jasmine.github.io/) for assertions. The included `Gruntfile.js` is set up to automatically run the tests for you as you develop.
+
+You can also run them manually with `./node_modules/karma/bin/karma start --single-run --browsers PhantomJS` (after `npm install`)
