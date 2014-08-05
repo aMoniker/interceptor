@@ -1,0 +1,28 @@
+{
+  "name": "interceptor",
+  "version": "0.0.1",
+  "homepage": "https://github.com/aMoniker/interceptor",
+  "authors": [
+    "Jim Greenleaf <jim@greenle.af>"
+  ],
+  "description": "An implementation of the Intercepting Filter pattern",
+  "main": "dist/interceptor.min.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "interceptor",
+    "intercepting",
+    "filters",
+    "filter"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
