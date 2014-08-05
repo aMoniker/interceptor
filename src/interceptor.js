@@ -44,19 +44,48 @@ Interceptor.prototype.addFilter = function(name, callback, order) {
     if (!this.filters[name][order]) { this.filters[name][order] = []; }
     if (!this.filtersIndex[name])   { this.filtersIndex[name]   = []; }
 
-    this.filtersIndex[name][order] = order;
     this.filters[name][order] = this.filters[name][order].concat([callback]);
+    if (this.filtersIndex[name].indexOf(order) === -1) {
+        this.filtersIndex[name].push(order);
+    }
 
     return true;
 };
 
-Interceptor.prototype.applyFilter = function() {
+Interceptor.prototype.applyFilter = function(name) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    var ret = args.length ? args[0] : undefined;
 
+    if (!this.filters[name] || !this.filtersIndex[name]) { return ret; }
+
+    this.filtersIndex[name].sort(function(a, b) {
+        if (a === b) { return 0; }
+        return (a > b ? 1 : -1);
+    });
+
+    for (var i = 0; i < this.filtersIndex[name].length; i++) {
+        var order = this.filtersIndex[name][i];
+        if (!this.filters[name][order]) { continue; }
+
+        for (var j = 0; j < this.filters[name][order].length; j++) {
+            var callback = this.filters[name][order][j];
+            if (typeof callback !== 'function') { continue; }
+            ret = args[0] = callback.apply(undefined, args);
+        }
+    }
+
+    return ret;
 };
 
 Interceptor.prototype.removeFilter = function() {
 
 };
+
+Interceptor.prototype.clearFilters = function() {
+    this.filters = {};
+    this.filtersIndex = {};
+    return true;
+}
 
 Interceptor.prototype.noConflict = function(global_name) {
     global_name = global_name || 'InterceptorJS';

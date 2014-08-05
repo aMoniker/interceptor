@@ -54,6 +54,12 @@ describe('Interceptor noConflict mode works', function() {
         expect(FooBarBazQux).toBeDefined();
     });
 
+    afterEach(function() {
+        (Interceptor || InterceptorJS || FooBarBazQux).init(true);
+        InterceptorJS = undefined;
+        FooBarBazQux = undefined;
+    });
+
 });
 
 describe('Interceptor filters can be added', function() {
@@ -74,7 +80,8 @@ describe('Interceptor filters can be added', function() {
     };
 
     beforeEach(function() {
-        (Interceptor || InterceptorJS || FooBarBazQux).init(true);
+        Interceptor.init(true);
+        Interceptor.clearFilters();
     });
 
     it('will throw an exception when a name isnt present', function() {
@@ -136,6 +143,81 @@ describe('Interceptor filters can be added', function() {
         expect(Interceptor.addFilter(test_name, test_callback2, test_order)).toBe(true);
         check_for_filter(test_name, test_callback, test_order);
         check_for_filter(test_name, test_callback2, test_order);
+    });
+
+});
+
+describe('Interceptor filters can be cleared', function() {
+
+    beforeEach(function() {
+        Interceptor.init(true);
+    });
+
+    it('can clear all its filters', function() {
+        expect(Interceptor.addFilter('foo.bar', function() {})).toBe(true);
+        expect(Interceptor.filters['foo.bar']).toBeDefined();
+        expect(Interceptor.filtersIndex['foo.bar']).toBeDefined();
+
+        Interceptor.clearFilters();
+
+        expect(Interceptor.filters['foo.bar']).toBeUndefined();
+        expect(Interceptor.filtersIndex['foo.bar']).toBeUndefined();
+    });
+
+});
+
+describe('Interceptor filters can be applied', function() {
+
+    beforeEach(function() {
+        Interceptor.init(true);
+        Interceptor.clearFilters();
+    });
+
+    it('and will return undefined for an undefined filter with no arguments', function() {
+        expect(Interceptor.applyFilter('foo.bar')).toBe(undefined);
+    });
+
+    it('and will return the first argument for a filter that is not defined', function() {
+        expect(Interceptor.applyFilter('foo.bar', 'qux')).toBe('qux');
+    });
+
+    it('and will let me apply a filter that has been added', function() {
+        expect(Interceptor.addFilter('foo.bar', function() { return 'baz'; })).toBe(true);
+        expect(Interceptor.applyFilter('foo.bar', 'qux')).toBe('baz');
+    });
+
+    it('and will chain the results of applying filters', function() {
+        expect(Interceptor.addFilter('foo.bar', function(total) {
+            return total + 1;
+        })).toBe(true);
+        expect(Interceptor.addFilter('foo.bar', function(total) {
+            return total + 2;
+        })).toBe(true);
+        expect(Interceptor.addFilter('foo.bar', function(total) {
+            return total + 3;
+        })).toBe(true);
+
+        expect(Interceptor.applyFilter('foo.bar', 0)).toBe(6);
+    });
+
+    it('and will retain the bound context of a callback', function() {
+        var callback = $.proxy(function() { return this.baz; }, { baz: 'qux' });
+        expect(Interceptor.addFilter('foo.bar', callback)).toBe(true);
+        expect(Interceptor.applyFilter('foo.bar')).toBe('qux');
+    });
+
+    it('and will let me specify the order of filters', function() {
+        expect(Interceptor.addFilter('foo.bar', function(s) {
+            return s + 'foo';
+        }, 1000)).toBe(true);
+        expect(Interceptor.addFilter('foo.bar', function(s) {
+            return s + 'bar';
+        }, -20)).toBe(true);
+        expect(Interceptor.addFilter('foo.bar', function(s) {
+            return s + 'baz';
+        }, 57)).toBe(true);
+
+        expect(Interceptor.applyFilter('foo.bar', '')).toBe('barbazfoo');
     });
 
 });
