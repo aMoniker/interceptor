@@ -52,6 +52,12 @@ module.exports = function(grunt) {
                 ],
                 tasks: ['compile-js']
             },
+            tests: {
+                files: [
+                    'test/**/*.js',
+                ],
+                tasks: ['karma:tests'],
+            }
         }
     });
 
