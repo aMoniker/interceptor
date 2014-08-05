@@ -4,7 +4,7 @@
   "description": "Provides a simple Intercepting Filter mechanism",
   "main": "dist/interceptor.min.js",
   "scripts": {
-    "test": "runtests"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   },
   "repository": {
     "type": "git",
