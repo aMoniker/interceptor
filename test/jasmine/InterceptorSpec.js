@@ -221,3 +221,94 @@ describe('Interceptor filters can be applied', function() {
     });
 
 });
+
+describe('Interceptor filters can be removed', function() {
+
+    var callback1 = function() { return 'foo'; };
+    var callback2 = function() { return 'bar'; };
+
+    var add_filters = function() {
+        expect(Interceptor.addFilter('foo.bar', callback1, 100)).toBe(true);
+        expect(Interceptor.addFilter('baz.qux', callback2, 200)).toBe(true);
+    };
+
+    var expect_removal = function() {
+        expect(Interceptor.filters['foo.bar']).toBeUndefined();
+        expect(Interceptor.filters['baz.qux']).toBeDefined();
+        expect(Interceptor.filtersIndex['foo.bar']).toBeUndefined();
+        expect(Interceptor.filtersIndex['baz.qux']).toBeDefined();
+    };
+
+    var expect_nonremoval = function() {
+        expect(Interceptor.filters['foo.bar']).toBeDefined();
+        expect(Interceptor.filters['baz.qux']).toBeDefined();
+        expect(Interceptor.filtersIndex['foo.bar']).toBeDefined();
+        expect(Interceptor.filtersIndex['baz.qux']).toBeDefined();
+    }
+
+    beforeEach(function() {
+        Interceptor.init(true);
+        Interceptor.clearFilters();
+    });
+
+    it('even if they arent present to begin with', function() {
+        expect(Interceptor.removeFilter('foo.bar')).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar', function(){})).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar', function(){}, 100)).toBe(true);
+    });
+
+    it('after they\'ve been added', function() {
+        expect(Interceptor.addFilter('foo.bar', function() {})).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar')).toBe(true);
+        expect(Interceptor.filters).toEqual({});
+        expect(Interceptor.filtersIndex).toEqual({});
+    });
+
+    it('but it wont remove unspecified filters (by name)', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar')).toBe(true);
+        expect_removal();
+    });
+
+    it('but it wont remove unspecified filters (by name & callback)', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar', callback1)).toBe(true);
+        expect_removal();
+    });
+
+    it('but it wont remove unspecified filters (by name & order)', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar', null, 100)).toBe(true);
+        expect_removal();
+    });
+
+    it('but it wont remove unspecified filters (by name & callback & order)', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar', callback1, 100)).toBe(true);
+        expect_removal();
+    });
+
+    it('and it wont remove when the callback doesn\'t match', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar', function() { return 'etc'; })).toBe(true);
+        expect_nonremoval();
+    });
+
+    it('and it wont remove when the order doesn\'t match', function() {
+        add_filters();
+        expect(Interceptor.removeFilter('foo.bar', callback1, 500)).toBe(true);
+        expect_nonremoval();
+    });
+
+    it('and it will only remove specified filters', function() {
+        add_filters();
+        expect(Interceptor.addFilter('foo.bar', function(){}, 500)).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar', callback1, 100)).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar', null, 100)).toBe(true);
+        expect(Interceptor.removeFilter('foo.bar', callback1)).toBe(true);
+        expect_nonremoval();
+        expect(Interceptor.filters['foo.bar'][500]).toBeDefined();
+        expect(Interceptor.filtersIndex['foo.bar'].indexOf(500)).not.toBe(-1);
+    });
+
+});

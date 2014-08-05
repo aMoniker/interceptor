@@ -77,8 +77,52 @@ Interceptor.prototype.applyFilter = function(name) {
     return ret;
 };
 
-Interceptor.prototype.removeFilter = function() {
+Interceptor.prototype.removeFilter = function(name, callback, order) {
+    if (!this.filters[name] || !this.filtersIndex[name]) { return true; }
 
+    if (!callback && !order) {
+        delete this.filters[name];
+    } else if (order) {
+        if (this.filters[name][order] && this.filters[name][order].length) {
+            for (var i = 0; i < this.filters[name][order].length; i++) {
+                if (callback) {
+                    if (callback = this.filters[name][order][i]) {
+                        this.filters[name][order].splice(i, 1);
+                    }
+                } else {
+                    this.filters[name][order].splice(i, 1);
+                }
+            }
+        }
+    } else if (callback) {
+        for (var ord in this.filters[name]) {
+            if (!this.filters[name].hasOwnProperty(ord)) { continue; }
+            for (var j = 0; j < this.filters[name][ord].length; j++) {
+                if (callback === this.filters[name][ord][j]) {
+                    this.filters[name][ord].splice(j, 1);
+                }
+            }
+            if (!this.filters[name][ord].length) {
+                delete this.filters[name][ord];
+            }
+        }
+    }
+
+    var index = this.filtersIndex[name].indexOf(order);
+    if (order && index !== -1) {
+        this.filtersIndex[name].splice(index, 1);
+    }
+
+    if (order && this.filters[name][order] && !this.filters[name][order].length) {
+        delete this.filters[name][order];
+    }
+
+    if (!this.filters[name] || Object.getOwnPropertyNames(this.filters[name]).length === 0) {
+        delete this.filters[name];
+        delete this.filtersIndex[name];
+    }
+
+    return true;
 };
 
 Interceptor.prototype.clearFilters = function() {
