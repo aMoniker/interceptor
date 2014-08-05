@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         uglify: {
             main: {
                 files: {
-                    'dist/js/interceptor.min.js': [
+                    'dist/interceptor.min.js': [
                         'src/interceptor.js',
                     ]
                 },
@@ -63,6 +63,6 @@ module.exports = function(grunt) {
     
     grunt.task.run('notify_hooks');
     grunt.registerTask('compile-js', ['uglify', 'notify:js', 'karma-tests']);
-    grunt.registerTask('karma-tests', ['karma:continuous', 'notify:karma']);
+    grunt.registerTask('karma-tests', ['karma:tests', 'notify:karma']);
     grunt.registerTask('default', ['watch']);
 };
